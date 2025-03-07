@@ -81,221 +81,96 @@
 //     </div>
 //   );
 // };
-// import "bootstrap/dist/css/bootstrap.min.css";
-// import "bootstrap/dist/js/bootstrap.bundle.min.js";
-// import { useState } from "react";
-// import { PostAuth } from "./GetApi";
-// import { useNavigate } from "react-router-dom";
-
-// export const LoginPage = () => {
-//   const navigate = useNavigate();
-//   // Initializing the state for username and password
-//   const [auth, setAuth] = useState({
-//     username: "",
-//     password: "",
-//   });
-
-//   // Handling changes in the input fields
-//   const handleInputChange = (e) => {
-//     const { name, value } = e.target;
-//     setAuth((prevState) => ({
-//       ...prevState,
-//       [name]: value,
-//     }));
-//   };
-
-//   // Function to handle form submission
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     // Validation logic
-//     let validationErrors = {};
-//     if (!auth.username) validationErrors.username = "Please fill this field.";
-//     if (!auth.password) validationErrors.password = "Please fill this field.";
-
-//     // If there are errors, set them and stop the submission
-//     if (Object.keys(validationErrors).length > 0) {
-//       setErrors(validationErrors);
-//       return;
-//     }
-
-//     try {
-//       const res = await PostAuth(auth); // Assuming PostAuth returns a response object
-//       console.log("API Response:", res); // Debug the response
-
-//       if (res.data.code === 200) {
-//         // Ensure the response data indicates a successful login
-//         if (res.data && res.data.success) {
-//           console.log("Login successful:", res.data);
-//           navigate("/FirstDiv"); // Navigate to the desired page
-//         } else {
-//           console.error(
-//             "Login failed:",
-//             res.data.message || "Invalid username or password."
-//           );
-//           setErrors((prevErrors) => ({
-//             ...prevErrors,
-//             password: res.data.message || "Invalid username or password.",
-//           }));
-//         }
-//       } else {
-//         // Handle non-200 status codes
-//         console.error(
-//           "Login failed:",
-//           res.data.message || "Invalid username or password."
-//         );
-//         setErrors((prevErrors) => ({
-//           ...prevErrors,
-//           password: res.data.message || "Invalid username or password.",
-//         }));
-//       }
-//     } catch (error) {
-//       console.error("Error during login:", error.message || error);
-//       setErrors((prevErrors) => ({
-//         ...prevErrors,
-//         password: "An error occurred. Please try again later.",
-//       }));
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <div style={{ margin: "60px 0px 0px 100px" }}>
-//         <img src="src/assets/images/logo.png" width="18%" alt="Logo" />
-//       </div>
-//       <div style={{ margin: "100px 0px 0px 110px" }}>
-//         <form style={{ fontSize: "20px" }} onSubmit={handleSubmit}>
-//           <div className="mb-3">
-//             <label htmlFor="username" className="form-label">
-//               Username
-//             </label>
-//             <input
-//               style={{ width: "18%", height: "2.5rem" }}
-//               type="email"
-//               className="form-control"
-//               id="username"
-//               name="username"
-//               value={auth.username}
-//               onChange={handleInputChange}
-//               placeholder="Enter username"
-//             />
-//           </div>
-//           <div className="mb-3">
-//             <label htmlFor="password" className="form-label">
-//               Password
-//             </label>
-//             <input
-//               style={{ width: "18%", height: "2.5rem" }}
-//               type="password"
-//               className="form-control"
-//               id="password"
-//               name="password"
-//               value={auth.password}
-//               onChange={handleInputChange}
-//               placeholder="Enter password"
-//             />
-//           </div>
-//           <button
-//             type="submit"
-//             className="btn btn-primary"
-//             style={{ marginTop: "20px", marginBottom: "20px" }}
-//           >
-//             Login
-//           </button>
-//           <br />
-//           <button className="btn btn-primary btn1 " type="button">
-//             Sign up
-//           </button>
-//           <br />
-//           <button
-//             type="button"
-//             className="btn btn-primary"
-//             style={{ marginTop: "20px", marginBottom: "20px" }}
-//           >
-//             Back
-//           </button>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// };
-
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { useState } from "react";
 import { PostAuth } from "./GetApi";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const LoginPage = () => {
   const navigate = useNavigate();
 
-  // State for username and password
-  const [auth, setAuth] = useState({
-    username: "",
-    password: "",
-  });
+  // State for credentials and errors
+  const [auth, setAuth] = useState({ username: "", password: "" });
+  const [errors, setErrors] = useState({});
 
-  // State for validation messages
-  const [errors, setErrors] = useState({
-    username: "",
-    password: "",
-  });
+  // Simple email format validation
+  const isValidEmail = (email) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  // Handling changes in the input fields
+  // Handle input changes and clear error for that field
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setAuth((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-
-    // Clear error message for the specific field
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: "",
-    }));
+    setAuth((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  // Function to handle form submission
+  // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    // Validation logic
-    let validationErrors = {};
-    if (!auth.username) validationErrors.username = "Please fill this field.";
-    if (!auth.password) validationErrors.password = "Please fill this field.";
+  // First, validate email only.
+  if (!auth.username) {
+    setErrors({ username: "Please fill this field." });
+    return;
+  } else if (!isValidEmail(auth.username)) {
+    setErrors({ username: "Wrong email" });
+    return;
+  }
 
-    // If there are errors, set them and stop the submission
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+  // At this point, email is valid so clear any email error.
+  setErrors({});
 
-    try {
-      const res = await PostAuth(auth); // Assuming PostAuth returns a response object
-      console.log("API Response:", res); // Debug the response
+  // Now, validate password.
+  if (!auth.password) {
+    setErrors({ password: "Please fill this field." });
+    return;
+  } else if (auth.password.length < 6) {
+    setErrors({ password: "Wrong password" });
+    return;
+  }
 
-      if (res.data.code === 200) {
-        console.log("Login successful:", res.data);
-        navigate("/Dashboard"); // Navigate to the desired page
+  // Clear errors if both validations pass.
+  setErrors({});
+
+  // Proceed with API call.
+  try {
+    const res = await PostAuth(auth);
+    console.log("API Response:", res);
+    if (res.data.code === 200) {
+      localStorage.setItem("authToken", res.data.responseData);
+      toast.success("Login successful!");
+      setTimeout(() => navigate("/Dashboard"), 1500);
+    } else {
+      // For API errors, we prioritize email if the error mentions it.
+      const errorMsg = res.data.message || "Authentication error";
+      if (errorMsg.toLowerCase().includes("email")) {
+        setErrors({ username: errorMsg });
+      } else if (errorMsg.toLowerCase().includes("password")) {
+        setErrors({ password: errorMsg });
       } else {
-        console.error("Login failed:", res.data.message || "Unknown error");
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          password: res.data.message || "Invalid username or password.",
-        }));
+        // If ambiguous, we show error on email first.
+        setErrors({ username: errorMsg });
       }
-    } catch (error) {
-      console.error("Error during login:", error.message || error);
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        password: "An error occurred. Please try again later.",
-      }));
     }
-  };
+  } catch (error) {
+    console.error("Error during login:", error.message || error);
+    setErrors({ username: "An error occurred. Please try again." });
+  }
+};
+
+  
+  
+  
 
   return (
     <div>
+      {/* Toast container with custom CSS class for background color */}
+      <ToastContainer
+        position="top-right"
+        autoClose={1500}
+        toastClassName="custom-toast"
+      />
       <div style={{ margin: "60px 0px 0px 100px" }}>
         <img src="src/assets/images/logo.png" width="18%" alt="Logo" />
       </div>
@@ -306,7 +181,7 @@ export const LoginPage = () => {
               Username
             </label>
             <input
-              style={{ width: "18%", height: "2.5rem" }}
+              style={{ width: "20%", height: "2.5rem" }}
               type="email"
               className="form-control"
               id="username"
@@ -316,9 +191,9 @@ export const LoginPage = () => {
               placeholder="Enter username"
             />
             {errors.username && (
-              <div className="text-danger" style={{ fontSize: "14px" }}>
+              <span style={{ color: "red", fontSize: "12px" }}>
                 {errors.username}
-              </div>
+              </span>
             )}
           </div>
           <div className="mb-3">
@@ -326,7 +201,7 @@ export const LoginPage = () => {
               Password
             </label>
             <input
-              style={{ width: "18%", height: "2.5rem" }}
+              style={{ width: "20%", height: "2.5rem" }}
               type="password"
               className="form-control"
               id="password"
@@ -336,9 +211,9 @@ export const LoginPage = () => {
               placeholder="Enter password"
             />
             {errors.password && (
-              <div className="text-danger" style={{ fontSize: "14px" }}>
+              <span style={{ color: "red", fontSize: "12px" }}>
                 {errors.password}
-              </div>
+              </span>
             )}
           </div>
           <button
@@ -349,7 +224,7 @@ export const LoginPage = () => {
             Login
           </button>
           <br />
-          <button className="btn btn-primary btn1 " type="button">
+          <button className="btn btn-primary btn1" type="button">
             Sign up
           </button>
           <br />
@@ -365,3 +240,4 @@ export const LoginPage = () => {
     </div>
   );
 };
+

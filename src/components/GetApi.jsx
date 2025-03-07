@@ -1,17 +1,216 @@
 import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const API = axios.create({
   baseURL: "http://192.168.100.96:7182",
-  headers: {
-    Authorization:
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3YTcyOGRhYi1jOTM1LTQ0YTEtYjI1My1hNmQwYTVlZDg2YTYiLCJDb21wYW55SWQiOiIyMDI4IiwiQ29tcGFueU5hbWUiOiJBdXN6dGVjaCAyIiwiQ29tcGFueUNvZGUiOiJBdXN6dGVjaCBsIiwiQ29tcGFueU5vdGUiOiJXZSBhcmUgYSB0ZWFtIG9mIHNvZnR3YXJlIGRldmVsb3BlcnMgdGhhdCBkZWxpdmVyIGZ1bGwtY3ljbGUgb2Ygc29mdHdhcmUgZGV2ZWxvcG1lbnQgc2VydmljZXMgdG8gaGVscCBydW4geW91ciBidXNpbmVzc2VzIHNtb290aGx5IGFuZCBlZmZpY2llbnRseSBzcGVjaWFsaXplZCBpbiBwcm92aWRpbmcgY3VzdG9taXplZCBzb2Z0d2FyZSBzb2x1dGlvbnMuIFdlIGFyZSBjb21taXR0ZWQgdG8gZGVsaXZlciBoaWdobHkgZWZmaWNpZW50IHNvZnR3YXJlIHByb2R1Y3RzLiBXZSBrZWVwIHRyYWNrIG9mIGVtZXJnaW5nIHRlY2hub2xvZ2llcywgbGFuZ3VhZ2VzIGFuZCBwbGF0Zm9ybXMgaW4gdGhlIHNvZnR3YXJlIGluZHVzdHJ5LiBXZSBzcGVjaWFsaXplIGluIGJlc3Bva2UgZGlnaXRhbCBzb2x1dGlvbnMuIE91ciBQcm9qZWN0IE1hbmFnZXJzIGZvciBib3RoIGRlc2lnbiBhbmQgZGV2ZWxvcG1lbnQgYXJlIHZlcnkgZWFzeSB0byB3b3JrIHdpdGggYW5kIG1vdGl2YXRlZCB0byBwcm92aWRlIGFtYXppbmcgcmVzcG9uc2UgdGltZSBmb3IgY2hhbmdlcyB0aGF0IGFyZSBuZWVkZWQgdG8gYmUgbWFkZSBmb3IgeW91ciBidXNpbmVzc2VzLiBXZSB3b3JrIHdpdGggYWltIHRvIGJlIGludGVncmFsIHBhcnQgb2YgeW91ciBicmFuZCdzIGV2b2x1dGlvbiBiZWluZyBhIHRlYW0gdGhhdCBpcyBoZWxwZnVsLCBjb2xsYWJvcmF0aXZlLCByZXNwb25zaXZlLCBrbm93bGVkZ2VhYmxlIGFuZCBhY2Nlc3NpYmxlIC0gYWxsIGtleSBxdWFsaXRpZXMgdGhhdCBtYWtlIGFuIGFnZW5jeSB0b3Agbm90Y2guIFdlIGFwcHJvYWNoIHRvIHlvdXIgYnVzaW5lc3NlcyBhcyBhIHRydWUgcGFydG5lciBFYXN5IHRvIGNvbGxhYm9yYXRlIGFuZCBmbGV4aWJsZSB3aXRoIHlvdXIgdGltZWxpbmUgUXVhbGl0eS4gQ29yZSBldGhpY3Mgb2Ygb3VyIGJ1c2luZXNzIGFwcHJvYWNoIGFyZSBRdWFsaXR5LCBSZWxpYWJpbGl0eSAmIEFiaWxpdHkuIiwiQ29tcGFueUxvZ28iOiJ-L0F0dGVuZGFuY2VJbWFnZXMvRGVmYXVsdEltYWdlL0F1c3p0ZWNoTG9nby5wbmciLCJDb21wYW55RW1haWwiOiJBZG5hbi5zYWVlZEBhdXN6LXRlY2guY29tIiwiQ29tcGFueU5vdGlmaWNhdGlvbkVtYWlsIjoiQWRuYW4uc2FlZWRAYXVzei10ZWNoLmNvbSIsIkNvbXBhbnlDb250YWN0TmFtZSI6IiIsIkNvbXBhbnlBZGRyZXNzMSI6IkJsb2NrIEc0IFBoYXNlIDIgSm9oYXIgVG93biIsIkNvbXBhbnlBZGRyZXNzMiI6IiIsIkNvbXBhbnlBZGRyZXNzMyI6IiIsIkNvbXBhbnlDaXR5IjoiTGFob3JlICIsIkNvbXBhbnlTdGF0ZVByb3ZpbmNlIjoiIiwiQ29tcGFueUNvdW50cnkiOiJQYWtpc3RhbiIsIkNvbXBhbnlaaXBQb3N0YWxDb2RlIjoiIiwiQ29tcGFueVRlbGVwaG9uZSI6IiIsIkNvbXBhbnlNb2JpbGUiOiIwMzExNDg3MDM0OSIsIkNvbXBhbnlTTVRQRW1haWwiOiIiLCJDb21wYW55U01UUFBhc3N3b3JkIjoiIiwiQ29tcGFueVNNVFBVUkwiOiIiLCJDb21wYW55U01UUFBvcnQiOiIwIiwiU3Vic2NyaXB0aW9uVHlwZSI6IlBhaWQiLCJJc1BhaWQiOiJUcnVlIiwiSXNTdXBlckFkbWluIjoiVHJ1ZSIsIlN1YnNjcmliZWRVc2VyIjoiMCIsIkxvY2F0aW9uT25BdHRlbmRhbmNlIjoiRmFsc2UiLCJTaXRlSWQiOiI2MyIsIlNpdGVOYW1lIjoiQXVzenRlY2ggbHRkIiwiU3RhcnRUaW1lIjoiMTI6MDA6MDAiLCJJc1Zpc2l0b3IiOiJGYWxzZSIsIkVuZFRpbWUiOiIyMTowMDowMCIsIkluZHVzdHJ5SWQiOiIwIiwiSXNUYWtlSW1hZ2UiOiJGYWxzZSIsImxzdFNpdGVzIjoiW3tcIlNpdGVJZFwiOjYzLFwiU2l0ZU5hbWVcIjpcIkF1c3p0ZWNoIGx0ZFwiLFwiU2l0ZUNvZGVcIjpcIkF1c3p0ZWNoIGxfU1wiLFwiU2l0ZUxvbmdpdHVkZVwiOlwiXCIsXCJTaXRlTGF0aXR1ZGVcIjpcIlwiLFwiU2l0ZUxvZ29cIjpcIn4vQXR0ZW5kYW5jZUltYWdlcy9Db21wYW55XzIwMjgvcm5faW1hZ2VfcGlja2VyX2xpYl90ZW1wX2FmYmEwMzJhLTdhN2QtNGU0ZC05OTAyLTNhYjQwMjhjNzZkZC5wbmdcIn1dIiwiVXNlcklkIjoiMTAyNiIsIlVzZXJMb2dpbiI6ImFkbmFuLnNhZWVkQGF1c3otdGVjaC5jb20iLCJVc2VyRmlyc3ROYW1lIjoiQWRuYW4iLCJVc2VyTWlkZGxlTmFtZSI6IiIsIlVzZXJMYXN0TmFtZSI6IlNhZWVkIiwiVXNlckRlc2NyaXB0aW9uIjoibnVsbCIsIkdlbmRlciI6IkZlbWFsZSIsIlVzZXJQaG90byI6IlVwbG9hZCBhbnkgSW1hZ2UiLCJVc2VyRW1haWwiOiJhZG5hbi5zYWVlZEBhdXN6LXRlY2guY29tIiwiVXNlclBob25lIjoiMDAwMDAiLCJVc2VyQWRkcmVzczEiOiJ1bmRlZmluZWQiLCJVc2VyQWRkcmVzczIiOiIiLCJVc2VyQWRkcmVzczMiOiIiLCJVc2VyQ2l0eSI6IkxhaG9yZSAiLCJVc2VyU3RhdGVQcm92aW5jZSI6IiIsIlVzZXJDb3VudHJ5IjoibnVsbCIsIlVzZXJaaXBQb3N0YWxDb2RlIjoiIiwiVXNlckxhbmd1YWdlSWQiOiIwIiwiVXNlcklzRW1haWxDb25maXJtZWQiOiIxIiwiVXNlcklzRmlyc3RMb2dpbiI6IjAiLCJSb2xlSWQiOiIxNTciLCJSb2xlTmFtZSI6IkFkbWluIiwiUm9sZURlc2NyaXB0aW9uIjoic3RyaW5nIiwiUm9sZUNvZGUiOiJBRCIsIlVzZXJQYXNzd29yZCI6Im9mZmljZTEyMyIsIlNlbGZDaGVja0luIjoiVHJ1ZSIsIklwQWRkcmVzcyI6IiIsIlVzZUlwQWRkcmVzcyI6IkZhbHNlIiwiVXNlUmFkaXVzIjoiRmFsc2UiLCJFbXBsb3llZUNvZGUiOiIiLCJBdXN6VGVjaExvZ28iOiJ-L0F0dGVuZGFuY2VJbWFnZXMvRGVmYXVsdEltYWdlL0F1c3p0ZWNoTG9nby5wbmciLCJWaWV3TGVhdmVNb2R1bGUiOiJUcnVlIiwiQ2FuQWRkTGVhdmUiOiJUcnVlIiwiQ2FuRGVsZXRlTGVhdmUiOiJUcnVlIiwiQ2FuVXBkYXRlTGVhdmUiOiJUcnVlIiwiVmlld0xvYW5Nb2R1bGUiOiJUcnVlIiwiQ2FuVXBkYXRlTG9hbiI6IlRydWUiLCJDYW5EZWxldGVMb2FuIjoiVHJ1ZSIsIkNhbkFkZExvYW4iOiJUcnVlIiwiVmlld0VtcGxveWVlTW9kdWxlIjoiVHJ1ZSIsIkNhblVwZGF0ZUVtcGxveWVlIjoiVHJ1ZSIsIkNhbkRlbGV0ZUVtcGxveWVlIjoiVHJ1ZSIsIkNhbkFkZEVtcGxveWVlIjoiVHJ1ZSIsIkNhbkFkZE9mZmljZUhvbGlkYXkiOiJUcnVlIiwiQ2FuRGVsZXRlT2ZmaWNlSG9saWRheSI6IlRydWUiLCJDYW5VcGRhdGVPZmZpY2VIb2xpZGF5IjoiVHJ1ZSIsIlZpZXdPZmZpY2VIb2xpZGF5TW9kdWxlIjoiVHJ1ZSIsIlZpZXdSb2xlTW9kdWxlIjoiVHJ1ZSIsIkNhblVwZGF0ZVJvbGUiOiJUcnVlIiwiQ2FuRGVsZXRlUm9sZSI6IlRydWUiLCJDYW5BZGRSb2xlIjoiVHJ1ZSIsIlZpZXdVc2VyTW9kdWxlIjoiVHJ1ZSIsIkNhbkRlbGV0ZVVzZXIiOiJUcnVlIiwiQ2FuVXBkYXRlVXNlciI6IlRydWUiLCJDYW5BZGRVc2VyIjoiVHJ1ZSIsIlZpZXdTaXRlTW9kdWxlIjoiVHJ1ZSIsIkNhblVwZGF0ZVNpdGUiOiJUcnVlIiwiQ2FuRGVsZXRlU2l0ZSI6IlRydWUiLCJDYW5BZGRTaXRlIjoiVHJ1ZSIsIlZpZXdDb21wYW55TW9kdWxlIjoiVHJ1ZSIsIkNhbkRlbGV0ZUNvbXBhbnkiOiJUcnVlIiwiQ2FuVXBkYXRlQ29tcGFueSI6IlRydWUiLCJDYW5BZGRDb21wYW55IjoiVHJ1ZSIsIlZpZXdQb3NpdGlvbk1vZHVsZSI6IlRydWUiLCJDYW5VcGRhdGVQb3NpdGlvbiI6IlRydWUiLCJDYW5EZWxldGVQb3NpdGlvbiI6IlRydWUiLCJDYW5BZGRQb3NpdGlvbiI6IlRydWUiLCJWaWV3QXR0ZW5kYW5jZU1vZHVsZSI6IlRydWUiLCJJc011bHRpU2l0ZSI6IlRydWUiLCJJc1NpbmdsZVNpdGUiOiJGYWxzZSIsIlZpZXdDaGVja0luQ2hlY2tPdXRNb2R1bGUiOiJUcnVlIiwiVmlld0Fubm91bmNlbWVudE1vZHVsZSI6IlRydWUiLCJDYW5VcGRhdGVBbm5vdW5jZW1lbnQiOiJUcnVlIiwiQ2FuRGVsZXRlQW5ub3VuY2VtZW50IjoiVHJ1ZSIsIkNhbkFkZEFubm91bmNlbWVudCI6IlRydWUiLCJWaWV3VGFza01vZHVsZSI6IlRydWUiLCJDYW5VcGRhdGVUYXNrIjoiVHJ1ZSIsIkNhbkRlbGV0ZVRhc2siOiJUcnVlIiwiQ2FuQWRkVGFzayI6IlRydWUiLCJWaWV3U2NoZWR1bGVNb2R1bGUiOiJUcnVlIiwiQ2FuVXBkYXRlU2NoZWR1bGUiOiJUcnVlIiwiQ2FuRGVsZXRlU2NoZWR1bGUiOiJUcnVlIiwiQ2FuQWRkU2NoZWR1bGUiOiJUcnVlIiwiZXhwIjoxNzM5NjM1MTUwLCJpc3MiOiJiYXNlV2ViQXBpSXNzdWVyIiwiYXVkIjoiYmFzZVdlYkFwaUF1ZGllbmNlIn0.jTiIjql7O6blETGtNoxm7sTnosPXViXzcSB7jI-NsfQ",
-  },
 });
-export const PostAuth = (postauth) => {
+
+const token = localStorage.getItem("authToken");
+export const PostAuth = async (postauth) => {
   return API.post(
     `/api/Auth/Login?username=${postauth.username}&password=${postauth.password}`
   );
 };
-export const PostSites = (sitedata) => {
-  return API.post("/api/Site/SiteList", sitedata);
+
+export const PostSites = async (sitedata) => {
+  if (!token) {
+    throw new Error("No auth token found");
+  }
+  return API.post("/api/Site/SiteList", sitedata, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+export const PostDashboardData = async (dashboardData) => {
+  if (!token) {
+    throw new Error("no auth token found");
+  }
+
+  return API.post("/api/Dashboard/DashboardAPI", dashboardData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+export const PostPresentList = async (presentlist) => {
+  if (!token) {
+    throw new Error("no auth found");
+  }
+  return API.post("/api/Attendance/AttendanceList", presentlist, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+export const PostEmployeeList = async (employeelist) => {
+  if (!token) {
+    throw new Error("no auth found");
+  }
+  return API.post("/api/Employee/EmployeeList", employeelist, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+export const PostEmployeeAdd = async (employeeAdd) => {
+  console.log(employeeAdd);
+  if (!token) {
+    throw new Error("no auth found");
+  }
+  return API.post("/api/Employee/AddEmployee", employeeAdd, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+export const GetEmployeeDataId = async (employeeId) => {
+  if (!token) {
+    throw new Error("no auth found");
+  }
+  return API.post(
+    `/api/Employee/GetEmployeeByEmployeeId?EmployeeId=${employeeId}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+};
+export const PostEmployeeEducation = (educationDetails) => {
+  const formdata = new FormData();
+  formdata.append("EmployeeId", educationDetails.EmployeeId); // Fix key name (case-sensitive)
+  formdata.append("EducationId", educationDetails.EducationId);
+  formdata.append("Qualification", educationDetails.Qualification);
+  formdata.append("Degree", educationDetails.Degree);
+  formdata.append("Year", educationDetails.Year);
+  formdata.append("Grade", educationDetails.Grade);
+
+  if (!token) {
+    throw new Error("No Auth Found");
+  }
+
+  return API.post("/api/Employee/EmployeeEducationalDetail", formdata, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+export const DeleteDocument = async (educationId) => {
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    throw new Error("no auth found");
+  }
+  return API.post(
+    `/api/Employee/DeleteEmployeeDocument?Id=${educationId}&Document=Education`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+};
+export const PassportDocument = (document) => {
+  const token = localStorage.getItem("authToken") || "";
+  if (!token) {
+    throw new Error("No auth Found");
+  }
+  const formData = new FormData();
+  formData.append("DocumentId", document.DocumentId);
+  formData.append("EmployeeId", document.EmployeeId);
+  formData.append("Images", document.Images);
+  formData.append("Nationality", document.Nationality);
+  formData.append("IssueDate", document.IssueDate);
+  formData.append("ExpiryDate", document.ExpiryDate);
+
+  return API.post("/api/Employee/EmployeePassportDocuments", formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+export const UpdateEmployeeBankDetails = async (bankData) => {
+  if (!token) {
+    throw new Error("No authentication token found");
+  }
+
+  try {
+    const response = await API.post(
+      "/api/Employee/UpdateEmployee",
+      bankData,
+
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error updating passport details:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+export const UpdatePassportDetails = async (passport) => {
+  if (!token) {
+    throw new Error("No authentication token found");
+  }
+
+  try {
+    const response = await API.post(
+      "/api/Employee/EmployeePassportDocuments",
+      passport,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error updating passport details:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+export const UpdateVisaDetails = async (visaDetails) => {
+  if (!token) {
+    throw new Error("No authentication token found");
+  }
+  try {
+    const response = await API.post(
+      "/api/Employee/EmployeeVisaDocuments",
+      visaDetails,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error updating passport details:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
 };

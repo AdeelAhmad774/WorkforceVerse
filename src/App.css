@@ -100,3 +100,135 @@ justify-content: space-between;
   width: 30%;
  text-align: center;
 }
+.nav-scroll {
+  overflow-y: auto; /* Enables scrolling */
+  scrollbar-width: none; /* Hides scrollbar for modern browsers */
+}
+
+.nav-scroll::-webkit-scrollbar {
+  display: none; /* Hides scrollbar for Webkit-based browsers */
+}
+
+/* Basic styling for the NavLink */
+.nav-link {
+  color: black;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Aligns text and icons correctly */
+  width: 100%; /* Ensures NavLink spans full width */
+  padding: 4px 10px; /* Keeps padding constant */
+  box-sizing: border-box; /* Ensures padding is included in width */
+  transition: background-color 0.3s ease, padding 0.2s ease; /* Smooth transition */
+  flex-shrink: 0; /* Prevents shrinking */
+}
+
+/* Hover Effect */
+.nav-link:hover {
+  background-color: #f3dddd; /* Optional: Light background on hover */
+  padding-left: 15px; /* Optional: Adds extra space when hovered */
+  /
+}
+
+.nav-link span {
+  display: flex;
+  align-items: center;
+}
+.nav-link span {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Align text to the left */
+}
+
+.nav-link .icon {
+  margin-left: auto;
+  font-size: 25px; /* This pushes the icon to the right */
+}
+.butt{
+  
+  width: 15%;
+  
+  background-Color:blue;
+  border: none;
+ color: white;
+  border-radius: 5px;
+  
+  padding: 12px;
+  border: 1px solid rgb(216, 162, 162);
+  
+}
+.butt:hover{
+  background-color: #4254ca;
+}
+
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 9px; /* Scrollbar width */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f5eded; /* Track color */
+    border-radius: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #e2d8d8; /* Scrollbar thumb color */
+    border-radius: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #d8c8c8; /* Hover effect */
+  }
+  .btnprofile{
+    background-Color: blue;
+      color: white;
+  
+      padding: 10px 19px;
+      border:1px solid white;
+      border-Radius :5px;
+      font-Weight:500;
+      cursor :pointer;
+  }
+.btnprofile:hover{
+  background-color: #6153dd;
+}
+.btninfo{
+  background-Color: blue;
+  color: white;
+
+  padding: 11px 19px;
+  border:1px solid white;
+  border-Radius :5px;
+  font-Weight:500;
+  cursor :pointer;
+}
+.btninfo:hover{
+  background-color:#6153dd;
+}
+.modal-container {
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+ 
+}
+
+/* Webkit-based browsers (Chrome, Edge, Safari) */
+.modal-container::-webkit-scrollbar {
+  width: 4px; /* Thin scrollbar */
+}
+
+.modal-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+}
+
+.modal-container::-webkit-scrollbar-track {
+  background: transparent;
+  
+}
+
+.custom-toast {
+  background-color: #f8570c !important; /* Replace with your preferred color */
+  color: #fff !important; /* Optional: change text color if needed */
+}
+
+

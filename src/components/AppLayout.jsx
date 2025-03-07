@@ -4,6 +4,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import FirstDiv from "./FirstDiv";
 import NavigationBar from "./navigationbar";
 import { SecondDiv } from "./SecondDiv";
+import { Outlet } from "react-router-dom";
 
 export const AppLayout = () => {
   return (
@@ -11,6 +12,7 @@ export const AppLayout = () => {
       <NavigationBar />
       <FirstDiv />
       <SecondDiv />
+      
     </>
   );
 };
